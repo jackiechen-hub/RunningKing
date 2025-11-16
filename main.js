@@ -37,21 +37,57 @@ const btnReset = document.getElementById('btnReset');
 let gameTimeMinutes = 3;
 let teacherTimerInterval = null;
 
+// 修正：確保所有畫面都正確被選取
+const screens = document.querySelectorAll('section.screen');
+// 顯示特定畫面的輔助函式
+function showScreen(screenId) {
+    screens.forEach(s => s.classList.add('hidden'));
+    document.getElementById(screenId).classList.remove('hidden');
+    // 'active' class 在我們的 CSS 中不是用來顯示/隱藏的，所以我們用 'hidden'
+}
+
+
 timeDisplay.innerText = "03:00";
 
-/* listen players */
+/* 監聽 遊戲狀態 */
+db.ref('game/status').on('value', snapshot => {
+    const status = snapshot.val();
+    switch (status) {
+        case 'waiting':
+            showScreen('waiting');
+            break;
+        case 'config':
+            showScreen('config');
+            break;
+        case 'countdown':
+            showScreen('countdown');
+            break;
+        case 'running':
+            showScreen('running');
+            break;
+        case 'finished':
+            showScreen('timesup');
+            break;
+        default:
+            showScreen('waiting');
+    }
+});
+
+
+/* 監聽 players */
 db.ref('players').on('value', snapshot => {
   const data = snapshot.val() || {};
   const keys = Object.keys(data);
   playerCountEl.innerText = keys.length;
   playerListEl.innerHTML = '';
 
-  // show each player card with name and real-time steps
+  // [cite: 3300] show each player card with name and real-time steps
   keys.forEach(k => {
     const p = data[k];
     const card = document.createElement('div');
     card.className = 'playerCard';
-    card.innerHTML = `<div style="font-weight:700">${escapeHtml(p.name)}</div><div style="font-size:18px;margin-top:6px">步數：<span class="steps">${p.steps||0}</span></div>`;
+    // 修正：使用 span class="steps" 來顯示步數 [cite: 3300]
+    card.innerHTML = `<span class="steps">${p.steps||0}</span><div style="font-weight:700">${escapeHtml(p.name)}</div>`;
     playerListEl.appendChild(card);
   });
 
@@ -63,20 +99,17 @@ db.ref('players').on('value', snapshot => {
 
 /* UI actions */
 btnEndRegister.addEventListener('click', () => {
-  waitingSection.classList.add('hidden');
-  configSection.classList.remove('hidden');
+  // [cite: 3302]
   db.ref('game').set({ status: 'config', totalTime: gameTimeMinutes * 60 });
 });
 
 btnMinus.addEventListener('click', () => { if (gameTimeMinutes > 1) gameTimeMinutes--; updateTime(); });
 btnPlus.addEventListener('click', () => { gameTimeMinutes++; updateTime(); });
-function updateTime() { timeDisplay.innerText = String(gameTimeMinutes).padStart(2,'0') + ":00"; db.ref('game/totalTime').set(gameTimeMinutes*60); }
+function updateTime() { timeDisplay.innerText = String(gameTimeMinutes).padStart(2,'0') + ":00"; db.ref('game/totalTime').set(gameTimeMinutes*60); } [cite: 3303]
 
 btnStart.addEventListener('click', () => {
-  configSection.classList.add('hidden');
-  countdownSection.classList.remove('hidden');
   let c = 3;
-  db.ref('game').update({ status: 'countdown', countdown: c, totalTime: gameTimeMinutes*60 });
+  db.ref('game').update({ status: 'countdown', countdown: c, totalTime: gameTimeMinutes*60 }); [cite: 3304]
   bigCount.innerText = c;
   const ci = setInterval(() => {
     c--;
@@ -86,15 +119,16 @@ btnStart.addEventListener('click', () => {
     }
     if (c < 0) {
       clearInterval(ci);
-      db.ref('game').update({ status: 'running', startTime: Date.now() });
-      countdownSection.classList.add('hidden');
-      runningSection.classList.remove('hidden');
+      db.ref('game').update({ status: 'running', startTime: Date.now() }); [cite: 3304]
       startTeacherTimer();
     }
   }, 1000);
 });
 
 function startTeacherTimer() {
+  // 修正：清除舊的計時器 (如果存在)
+  if (teacherTimerInterval) clearInterval(teacherTimerInterval);
+    
   teacherTimerInterval = setInterval(async () => {
     const gSnap = await db.ref('game').get();
     const g = gSnap.val() || {};
@@ -102,60 +136,80 @@ function startTeacherTimer() {
     const startTs = g.startTime || Date.now();
     const elapsed = Math.floor((Date.now() - startTs)/1000);
     const remaining = total - elapsed;
+    
+    // [cite: 3308] 剩下 10 秒
     if (remaining <= 10 && remaining >= 0) {
-      ranksEl.style.display = 'none';
+      ranksEl.style.display = 'none'; // 隱藏排名
       final10El.classList.remove('hidden');
       finalCountEl.innerText = remaining;
     }
+    
+    // [cite: 3309] 時間到
     if (remaining < 0) {
       clearInterval(teacherTimerInterval);
       db.ref('game/status').set('finished');
-      runningSection.classList.add('hidden');
-      timesupSection.classList.remove('hidden');
     }
   }, 300);
 }
 
 btnShowResults.addEventListener('click', async () => {
-  timesupSection.classList.add('hidden');
-  resultSection.classList.remove('hidden');
+  showScreen('result'); // [cite: 3310]
   const snap = await db.ref('players').get();
   const players = snap.val() || {};
   const arr = Object.values(players).sort((a,b)=> (b.steps||0) - (a.steps||0));
   podiumEl.innerHTML = '';
+  // 顯示前三名 [cite: 3310]
   for (let i=0;i<Math.min(3,arr.length);i++){
     const p = arr[i];
     const el = document.createElement('div');
-    el.innerHTML = `<div style="font-size:18px">第 ${i+1} 名：${escapeHtml(p.name)} (${p.steps||0} 步)</div>`;
+    // 修正：顯示名次、名稱、步數
+    el.innerHTML = `<div style="font-size:1.5em; margin: 10px 0;">第 ${i+1} 名：${escapeHtml(p.name)} (${p.steps||0} 步)</div>`;
     podiumEl.appendChild(el);
   }
 });
 
 btnReset.addEventListener('click', async () => {
   await db.ref('players').remove();
-  await db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 });
-  resultSection.classList.add('hidden');
-  waitingSection.classList.remove('hidden');
+  await db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 }); [cite: 3311]
+  
+  // 重設 UI
   playerListEl.innerHTML = '';
   playerCountEl.innerText = '0';
   gameTimeMinutes = 3;
   updateTime();
+  // 修正：確保計時器停止
+  if (teacherTimerInterval) clearInterval(teacherTimerInterval);
+  // 修正：還原跑步畫面的排名顯示
+  ranksEl.style.display = 'flex';
+  final10El.classList.add('hidden');
 });
 
+//  比賽中渲染排名
 function renderRanks(playersObj) {
   const arr = Object.values(playersObj).map(p=>({name:p.name,steps:p.steps||0})).sort((a,b)=>b.steps-a.steps);
   ranksEl.innerHTML = '';
   arr.forEach(p=>{
     const d = document.createElement('div');
     d.className = 'playerCard';
-    d.innerHTML = `<div style="font-weight:700">${escapeHtml(p.name)}</div><div style="margin-top:6px">步數：${p.steps}</div>`;
+    // 修正：使用 span class="steps" 來顯示步數 
+    d.innerHTML = `<span class="steps">${p.steps}</span><div style="font-weight:700">${escapeHtml(p.name)}</div>`;
     ranksEl.appendChild(d);
   });
 }
 
-function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+function escapeHtml(s){ if(!s) return ''; 
+  // 修正：拼寫錯誤 replaceAll [cite: 3314]
+  return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); 
+}
 
 /* init game state */
 db.ref('game').get().then(snap=>{
-  if (!snap.exists()) db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 });
+  if (!snap.exists()) {
+    db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 }); [cite: 3314]
+  } else {
+    // 如果重整時遊戲已在進行，強制重設
+    if(snap.val().status !== 'waiting') {
+        btnReset.click(); // 觸發重設
+    }
+  }
 });

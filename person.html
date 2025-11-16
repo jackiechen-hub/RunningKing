@@ -6,14 +6,13 @@
 <title>跑跑遊戲王 — 參賽者</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header class="title">
+<body class="no-scroll"> <header class="title">
     <div class="ch">跑跑遊戲王</div>
     <div class="en">Running King</div>
   </header>
 
   <main class="container">
-    <section id="register" class="centered">
+    <section id="register" class="screen active centered">
       <div class="large-input">
         <input id="nameInput" placeholder="你的名稱..." maxlength="20" autocomplete="off">
         <button id="btnRegister" class="btn primary large">報名參賽</button>
@@ -21,23 +20,25 @@
       <p id="regMsg" class="msg"></p>
     </section>
 
-    <section id="game" class="hidden no-scroll">
+    <section id="game" class="screen hidden no-scroll">
       <div id="trackWrap" class="trackWrap">
-        <img src="assets/track_b.png" alt="跑道" class="trackImg">
+      
+        <img src="track.jpg" alt="跑道" class="trackImg">
+        
         <div id="waitText" class="waitText big">WAIT</div>
       </div>
+      
       <div id="runArea" class="runArea">向下滑動增加一步</div>
       <div id="scoreBox">步數：<span id="score">0</span></div>
     </section>
 
-    <section id="end" class="hidden">
+    <section id="end" class="screen hidden centered">
       <h2>時間到！</h2>
       <p>你的成績：<span id="finalScore">0</span></p>
       <button id="btnBack" class="btn">回到報名</button>
     </section>
   </main>
 
-  <!-- Firebase (compat libs) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 

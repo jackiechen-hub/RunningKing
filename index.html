@@ -6,15 +6,13 @@
 <title>跑跑遊戲王 — 主畫面</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header class="title">
+<body class="has-bg"> <header class="title">
     <div class="ch">跑跑遊戲王</div>
     <div class="en">Running King</div>
   </header>
 
   <main class="container">
-    <section id="waiting">
-      <h2 id="statusText">等待參賽者加入...</h2>
+    <section id="waiting" class="screen active"> <h2 id="statusText">等待參賽者加入...</h2>
       <p>目前參賽者：<span id="playerCount">0</span> 人</p>
       <div id="playerList" class="grid"></div>
 
@@ -23,8 +21,7 @@
       </div>
     </section>
 
-    <section id="config" class="hidden">
-      <h2>設定比賽時間</h2>
+    <section id="config" class="screen hidden"> <h2>設定比賽時間</h2>
       <div class="timeSetup">
         <button id="btnMinus" class="btn small">-1</button>
         <div id="timeDisplay" class="time">03:00</div>
@@ -39,28 +36,23 @@
       <div id="bigCount" class="big">3</div>
     </section>
 
-    <section id="running" class="hidden">
-      <div id="ranks" class="ranks"></div>
+    <section id="running" class="screen hidden"> <div id="ranks" class="ranks"></div>
       <div id="final10" class="countdown10 hidden"><div id="finalCount" class="big">10</div></div>
     </section>
 
-    <section id="timesup" class="hidden">
-      <div class="big">時間到</div>
+    <section id="timesup" class="screen hidden"> <div class="big">時間到</div>
       <button id="btnShowResults" class="btn">公布成績</button>
     </section>
 
-    <section id="result" class="hidden">
-      <h2>比賽結果</h2>
+    <section id="result" class="screen hidden"> <h2>比賽結果</h2>
       <div id="podium" class="podium"></div>
       <button id="btnReset" class="btn">重新比賽</button>
     </section>
   </main>
 
-  <!-- Firebase (compat libs) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <!-- 主畫面邏輯 -->
   <script src="main.js"></script>
 </body>
 </html>
