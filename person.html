@@ -13,15 +13,19 @@
   </header>
 
   <main class="container">
-    <section id="register">
-      <p>輸入參賽名稱（不分大小寫）</p>
-      <input id="nameInput" placeholder="你的名稱..." maxlength="20">
-      <div><button id="btnRegister" class="btn primary">報名參賽</button></div>
+    <section id="register" class="centered">
+      <div class="large-input">
+        <input id="nameInput" placeholder="你的名稱..." maxlength="20" autocomplete="off">
+        <button id="btnRegister" class="btn primary large">報名參賽</button>
+      </div>
       <p id="regMsg" class="msg"></p>
     </section>
 
-    <section id="game" class="hidden">
-      <div id="waitText" class="big">WAIT</div>
+    <section id="game" class="hidden no-scroll">
+      <div id="trackWrap" class="trackWrap">
+        <img src="assets/track_b.png" alt="跑道" class="trackImg">
+        <div id="waitText" class="waitText big">WAIT</div>
+      </div>
       <div id="runArea" class="runArea">向下滑動增加一步</div>
       <div id="scoreBox">步數：<span id="score">0</span></div>
     </section>

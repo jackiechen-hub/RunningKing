@@ -1,5 +1,4 @@
 /* main.js - 主畫面 (老師) */
-/* 先把你的 firebase config 放在這裡 (你提供的) */
 const firebaseConfig = {
   apiKey: "AIzaSyARfYoqBOdZZ2MChzJF_BC7LoW_comJfec",
   authDomain: "runningking.firebaseapp.com",
@@ -10,7 +9,6 @@ const firebaseConfig = {
   appId: "1:429230545810:web:084fb018b07812e8773f4b",
   measurementId: "G-8GLV17ZXD8"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -37,126 +35,105 @@ const podiumEl = document.getElementById('podium');
 const btnReset = document.getElementById('btnReset');
 
 let gameTimeMinutes = 3;
-let gameTimer = null;
-let remainingSeconds = 0;
 let teacherTimerInterval = null;
 
-/* 初始狀態 */
 timeDisplay.innerText = "03:00";
 
-/* 監聽 players */
-const playersRef = db.ref('players');
-playersRef.on('value', snapshot => {
+/* listen players */
+db.ref('players').on('value', snapshot => {
   const data = snapshot.val() || {};
-  const names = Object.keys(data);
-  playerCountEl.innerText = names.length;
+  const keys = Object.keys(data);
+  playerCountEl.innerText = keys.length;
   playerListEl.innerHTML = '';
-  names.forEach(k => {
+
+  // show each player card with name and real-time steps
+  keys.forEach(k => {
     const p = data[k];
     const card = document.createElement('div');
     card.className = 'playerCard';
-    card.innerHTML = `<div><strong>${escapeHtml(p.name)}</strong></div><div>步數：${p.steps || 0}</div>`;
+    card.innerHTML = `<div style="font-weight:700">${escapeHtml(p.name)}</div><div style="font-size:18px;margin-top:6px">步數：<span class="steps">${p.steps||0}</span></div>`;
     playerListEl.appendChild(card);
   });
 
-  // 如果比賽中即時顯示排序
-  if (currentGameStatus() === 'running') {
-    renderRanks(data);
-  }
+  // if running, also update ranks panel
+  db.ref('game/status').get().then(snap => {
+    if (snap.val() === 'running') renderRanks(data);
+  });
 });
 
-/* UI 互動 */
+/* UI actions */
 btnEndRegister.addEventListener('click', () => {
   waitingSection.classList.add('hidden');
   configSection.classList.remove('hidden');
   db.ref('game').set({ status: 'config', totalTime: gameTimeMinutes * 60 });
 });
 
-btnMinus.addEventListener('click', () => {
-  if (gameTimeMinutes > 1) gameTimeMinutes--;
-  updateTime();
-});
-btnPlus.addEventListener('click', () => {
-  gameTimeMinutes++;
-  updateTime();
-});
-function updateTime() {
-  timeDisplay.innerText = String(gameTimeMinutes).padStart(2,'0') + ":00";
-  db.ref('game/totalTime').set(gameTimeMinutes * 60);
-}
+btnMinus.addEventListener('click', () => { if (gameTimeMinutes > 1) gameTimeMinutes--; updateTime(); });
+btnPlus.addEventListener('click', () => { gameTimeMinutes++; updateTime(); });
+function updateTime() { timeDisplay.innerText = String(gameTimeMinutes).padStart(2,'0') + ":00"; db.ref('game/totalTime').set(gameTimeMinutes*60); }
 
-btnStart.addEventListener('click', async () => {
-  // start countdown 3-2-1 on DB
+btnStart.addEventListener('click', () => {
   configSection.classList.add('hidden');
   countdownSection.classList.remove('hidden');
   let c = 3;
   db.ref('game').update({ status: 'countdown', countdown: c, totalTime: gameTimeMinutes*60 });
   bigCount.innerText = c;
-  teacherTimerInterval = setInterval(() => {
+  const ci = setInterval(() => {
     c--;
     if (c >= 0) {
       bigCount.innerText = (c===0? 'START': c);
       db.ref('game/countdown').set(c);
     }
     if (c < 0) {
-      clearInterval(teacherTimerInterval);
-      // start running
+      clearInterval(ci);
       db.ref('game').update({ status: 'running', startTime: Date.now() });
       countdownSection.classList.add('hidden');
       runningSection.classList.remove('hidden');
-      startTeacherTimer(); // teacher side timer to handle final 10s and timesup
+      startTeacherTimer();
     }
   }, 1000);
 });
 
 function startTeacherTimer() {
-  // use interval to check remaining and toggle final10 if <=10
   teacherTimerInterval = setInterval(async () => {
     const gSnap = await db.ref('game').get();
     const g = gSnap.val() || {};
     const total = g.totalTime || (gameTimeMinutes*60);
     const startTs = g.startTime || Date.now();
-    const elapsed = Math.floor((Date.now() - startTs) / 1000);
-    remainingSeconds = total - elapsed;
-    if (remainingSeconds <= 10 && remainingSeconds >= 0) {
-      // show final 10 UI
+    const elapsed = Math.floor((Date.now() - startTs)/1000);
+    const remaining = total - elapsed;
+    if (remaining <= 10 && remaining >= 0) {
       ranksEl.style.display = 'none';
       final10El.classList.remove('hidden');
-      finalCountEl.innerText = remainingSeconds;
+      finalCountEl.innerText = remaining;
     }
-    if (remainingSeconds < 0) {
+    if (remaining < 0) {
       clearInterval(teacherTimerInterval);
-      // time up
       db.ref('game/status').set('finished');
       runningSection.classList.add('hidden');
       timesupSection.classList.remove('hidden');
     }
-  }, 300); // check often
+  }, 300);
 }
 
 btnShowResults.addEventListener('click', async () => {
   timesupSection.classList.add('hidden');
   resultSection.classList.remove('hidden');
-
   const snap = await db.ref('players').get();
   const players = snap.val() || {};
-  const arr = Object.values(players).sort((a,b) => (b.steps||0) - (a.steps||0));
-  // display top 3
+  const arr = Object.values(players).sort((a,b)=> (b.steps||0) - (a.steps||0));
   podiumEl.innerHTML = '';
-  for (let i = 0; i < Math.min(3, arr.length); i++) {
+  for (let i=0;i<Math.min(3,arr.length);i++){
     const p = arr[i];
-    const rank = i+1;
     const el = document.createElement('div');
-    el.innerHTML = `<div style="font-size:20px">第 ${rank} 名：${escapeHtml(p.name)} (${p.steps||0} 步)</div>`;
+    el.innerHTML = `<div style="font-size:18px">第 ${i+1} 名：${escapeHtml(p.name)} (${p.steps||0} 步)</div>`;
     podiumEl.appendChild(el);
   }
 });
 
 btnReset.addEventListener('click', async () => {
-  // 清空 players 與 game
   await db.ref('players').remove();
-  await db.ref('game').set({ status: 'waiting', totalTime: 3*60, countdown: 0 });
-  // reset UI
+  await db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 });
   resultSection.classList.add('hidden');
   waitingSection.classList.remove('hidden');
   playerListEl.innerHTML = '';
@@ -165,34 +142,20 @@ btnReset.addEventListener('click', async () => {
   updateTime();
 });
 
-/* helper render ranks (two columns) */
 function renderRanks(playersObj) {
-  const arr = Object.values(playersObj).map(p => ({ name: p.name, steps: p.steps||0 })).sort((a,b) => b.steps - a.steps);
+  const arr = Object.values(playersObj).map(p=>({name:p.name,steps:p.steps||0})).sort((a,b)=>b.steps-a.steps);
   ranksEl.innerHTML = '';
-  arr.forEach((p, idx) => {
+  arr.forEach(p=>{
     const d = document.createElement('div');
     d.className = 'playerCard';
-    d.innerHTML = `<div><strong>${escapeHtml(p.name)}</strong></div><div>步數：${p.steps}</div>`;
+    d.innerHTML = `<div style="font-weight:700">${escapeHtml(p.name)}</div><div style="margin-top:6px">步數：${p.steps}</div>`;
     ranksEl.appendChild(d);
   });
 }
 
-/* utility */
-function escapeHtml(s) {
-  if (!s) return '';
-  return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-}
+function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
 
-/* small: current game status getter */
-async function currentGameStatus() {
-  const snap = await db.ref('game/status').get();
-  return snap.val();
-}
-
-/* 初始化 game state if missing */
-(async function initGame(){
-  const g = (await db.ref('game').get()).val();
-  if (!g) {
-    await db.ref('game').set({ status: 'waiting', totalTime: 3*60, countdown: 0 });
-  }
-})();
+/* init game state */
+db.ref('game').get().then(snap=>{
+  if (!snap.exists()) db.ref('game').set({ status:'waiting', totalTime:3*60, countdown:0 });
+});
