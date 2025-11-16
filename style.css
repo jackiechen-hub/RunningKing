@@ -7,15 +7,20 @@
 }
 *{box-sizing:border-box}
 
-/* 修正：使用 bg.jpg 作為背景 */
+/* 修正：使用 assets/bg.jpg (您上傳的) */
 html,body{
   height:100%;
   margin:0;
   padding:0;
   overflow:auto;
-  background: url('bg.jpg') repeat; /* 使用您提供的草地背景 */
+  background: url('assets/bg.jpg') repeat; /* 修正：使用您提供的草地背景 */
   color:#fff;
   font-family:"Microsoft JhengHei", Arial, sans-serif;
+}
+
+/* 修正：主畫面的背景 */
+body.has-bg {
+    background: url('assets/mainbg.png') repeat;
 }
 
 .title{margin:18px 0;text-align:center}
@@ -38,7 +43,7 @@ h2{color:#fff}
 .time{font-size:40px;background:rgba(255,255,255,0.04);padding:10px 20px;border-radius:10px}
 .big{font-size:84px;font-weight:900;text-align:center;margin:30px 0}
 
-/* 修正：新增 '比賽中' 的排名樣式  */
+/* 修正：新增 '比賽中' 的排名樣式 (來自您的需求 #3) */
 .ranks{
   display:flex;
   flex-wrap:wrap;
@@ -59,7 +64,6 @@ h2{color:#fff}
   color: var(--accent);
 }
 
-
 .podium{text-align:center;margin-top:20px;color:#fff}
 .runArea{background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;margin-top:12px;font-size:18px;touch-action:none}
 .msg{color:#ffdede;margin-top:10px}
@@ -71,7 +75,7 @@ h2{color:#fff}
 .large-input input{font-size:22px;padding:18px;border-radius:12px;border:none;width:320px;text-align:center;margin-bottom:12px}
 .large-input .large{font-size:20px;padding:14px 26px;border-radius:12px}
 
-/* 修正：跑道頁面 [cite: 3280, 3323] */
+/* 修正：跑道頁面 (需求 #1, #2) */
 body.no-scroll{overflow:hidden;height:100vh}
 #game.no-scroll{padding:0;height:100vh;max-width:none;}
 
@@ -120,6 +124,7 @@ body.no-scroll{overflow:hidden;height:100vh}
     font-weight: 900;
     color: #f1c40f;
     text-shadow: 3px 3px #a93226;
+    display: none; /* 預設隱藏 */
 }
 #game #runArea {
     /* 隱藏 "向下滑動" 文字，因為背景已經很清楚 */

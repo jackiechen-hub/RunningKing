@@ -21,78 +21,94 @@ const gameSection = document.getElementById('game');
 const waitText = document.getElementById('waitText');
 const runArea = document.getElementById('runArea');
 const scoreEl = document.getElementById('score');
+const scoreBox = document.getElementById('scoreBox'); // 抓取分數框
 const endSection = document.getElementById('end');
 const finalScoreEl = document.getElementById('finalScore');
 const btnBack = document.getElementById('btnBack');
 
-// 修正：確保所有畫面都正確被選取
+// 修正：補上缺失的 screens 變數
 const screens = document.querySelectorAll('section.screen');
-// 顯示特定畫面的輔助函式
-function showScreen(screenId) {
-    screens.forEach(s => s.classList.add('hidden'));
-    document.getElementById(screenId).classList.remove('hidden');
-    // 'active' class 在我們的 CSS 中不是用來顯示/隱藏的，所以我們用 'hidden'
-}
 
 let playerKey = null;
 let steps = 0;
 let runningEnabled = false;
 
+// 修正：補上缺失的 showScreen 函式
+function showScreen(screenId) {
+    screens.forEach(s => s.classList.add('hidden'));
+    // 移除 active class，改用 hidden
+    document.querySelectorAll('.screen.active').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.remove('hidden');
+}
+
+
 btnRegister.addEventListener('click', async () => {
   const raw = nameInput.value.trim();
   if (!raw) { regMsg.innerText = '名稱不可空白'; return; }
-  const normalized = raw.toLowerCase(); // [cite: 3318] 不分大小寫
+  
+  btnRegister.disabled = true; // 鎖定按鈕
+  regMsg.innerText = '檢查報名狀態...';
+  
+  // 需求 #2：檢查是否已結束報名
+  const gameStatusSnap = await db.ref('game/status').get();
+  if (gameStatusSnap.val() !== 'waiting') {
+      regMsg.innerText = '報名已結束';
+      btnRegister.disabled = false;
+      return;
+  }
+  
+  const normalized = raw.toLowerCase(); // 不分大小寫
   const safeKey = sanitizeKey(normalized);
 
-  // [cite: 3318] 檢查重複
   const snap = await db.ref('players/' + safeKey).get();
   if (snap.exists()) {
     regMsg.innerText = '選手名稱重複';
+    btnRegister.disabled = false; // 解鎖按鈕
     return;
   }
 
   // 報名成功
-  await db.ref('players/' + safeKey).set({ name: raw, steps: 0, finished:false, joinedAt: Date.now() }); [cite: 3318]
+  await db.ref('players/' + safeKey).set({ name: raw, steps: 0, finished:false, joinedAt: Date.now() });
   playerKey = safeKey;
   steps = 0;
   
-  // 切換畫面
-  showScreen('game'); // [cite: 3318]
+  // 需求 #1：顯示預備跑步畫面
+  showScreen('game'); 
 
   // 監聽遊戲狀態
   db.ref('game').on('value', s => {
     const g = s.val() || {};
-    // [cite: 3319]
+    
     if (g.status === 'countdown') {
       waitText.innerText = g.countdown > 0 ? g.countdown : 'START';
-      runningEnabled = false;
       waitText.style.display = 'block';
-      scoreEl.style.display = 'none';
+      scoreBox.style.display = 'none'; // 隱藏步數
+      runningEnabled = false;
     } else if (g.status === 'running') {
       waitText.style.display = 'none';
-      scoreEl.style.display = 'block'; // 顯示步數
+      scoreBox.style.display = 'block'; // 顯示步數
       runningEnabled = true;
     } else if (g.status === 'finished') {
       runningEnabled = false;
-      showScreen('end'); // [cite: 3320]
+      showScreen('end');
       finalScoreEl.innerText = steps;
     } else {
       // 'waiting' or 'config'
       waitText.innerText = 'WAIT';
       waitText.style.display = 'block';
-      scoreEl.style.display = 'none';
+      scoreBox.style.display = 'none'; // 隱藏步數
       runningEnabled = false;
     }
   });
 });
 
-/* prevent page scrolling  */
+/* prevent page scrolling */
 document.documentElement.style.overflow = 'hidden';
 document.body.style.overflow = 'hidden';
 
-/* swipe down detection [cite: 3324] */
+/* swipe down detection */
 let touchStartY = 0;
-// 修正：我們應該在整個遊戲畫面 (gameSection) 偵聽滑動，而不只是 runArea
+// 修正：我們應該在整個遊戲畫面 (gameSection) 偵聽滑動
 gameSection.addEventListener('touchstart', e => { 
     touchStartY = e.touches[0].clientY; 
 }, { passive:true });
@@ -105,18 +121,23 @@ gameSection.addEventListener('touchend', async e => {
     steps++;
     scoreEl.innerText = steps;
     // 立即更新 Firebase
-    await db.ref('players/' + playerKey + '/steps').set(steps);
+    await db.ref('players/'F/' + playerKey + '/steps').set(steps);
   }
 }, { passive:true });
 
 btnBack.addEventListener('click', async () => {
-  // [cite: 3324]
+  //
   if (playerKey) await db.ref('players/' + playerKey).remove();
+  
   showScreen('register');
+  
+  // 重置UI
   nameInput.value = '';
   regMsg.innerText = '';
-  steps = 0; // 重置本地步數
+  steps = 0;
   playerKey = null;
+  btnRegister.disabled = false; // 確保按鈕可以再次使用
+  db.ref('game').off(); // 停止監聽
 });
 
 function sanitizeKey(s){ return s.replace(/[#.\[\]$\/]/g,'_'); }
