@@ -1,132 +1,61 @@
-/* style.css (已修正) */
-:root{
-  --bg1: #0b1220;
-  --accent: #ff7a59;
-  --panel: rgba(255,255,255,0.06);
-  --muted: rgba(255,255,255,0.7);
-}
+/* style.css - 共用（座標以 1080x1920 為基準） */
 *{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;background:#000;display:flex;align-items:center;justify-content:center}
+#stageWrap{width:1080px;height:1920px;transform-origin:0 0;position:relative}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}
 
-/* 修正：使用 assets/bg.jpg (您上傳的) */
-html,body{
-  height:100%;
-  margin:0;
-  padding:0;
-  overflow:auto;
-  background: url('assets/bg.jpg') repeat; /* 修正：使用您提供的草地背景 */
-  color:#fff;
-  font-family:"Microsoft JhengHei", Arial, sans-serif;
-}
+/* 共用 UI layer 以絕對座標定位 */
+.ui-layer{position:absolute;left:0;top:0;width:1080px;height:1920px;pointer-events:none}
 
-/* 修正：主畫面的背景 */
-body.has-bg {
-    background: url('assets/mainbg.png') repeat;
-}
+/* waiting - player grid start at (90,360) */
+#playerGrid{pointer-events:auto;left:90px;top:360px;position:absolute;width:900px;height:800px}
+.playerCard{width:300px;height:90px;background:rgba(255,255,255,0.9);color:#111;border-radius:14px;padding:12px;box-shadow:0 8px 18px rgba(0,0,0,0.2);font-weight:700;display:flex;flex-direction:column;justify-content:center}
+.playerCard .pname{font-size:20px}
+.playerCard .psteps{font-size:16px;margin-top:6px}
 
-.title{margin:18px 0;text-align:center}
-.title .ch{font-size:36px;font-weight:800;letter-spacing:1px}
-.title .en{font-size:14px;color:#cfe8ff;margin-top:6px}
-.container{max-width:1000px;margin:0 auto;padding:20px}
-h2{color:#fff}
-.btn{background:var(--panel);border:none;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.2)}
-.btn.primary{background:var(--accent);color:#fff;font-weight:700}
-.btn.small{padding:6px 10px;font-size:16px}
+/* position close button at (90,1400) */
+#btnClose{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
 
-/* 畫面切換 */
-.screen { display: none; width: 100%; }
-.screen.active { display: flex; flex-direction: column; align-items: center; }
+/* config screen positions */
+#timeCenter{position:absolute;left:270px;top:760px;font-size:64px;color:#fff;width:540px;text-align:center}
+#btnMinus{position:absolute;left:258px;top:900px;width:120px;height:auto;pointer-events:auto;cursor:pointer}
+#btnPlus{position:absolute;left:600px;top:900px;width:120px;height:auto;pointer-events:auto;cursor:pointer}
+#btnStart{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
 
-.hidden{display:none}
-.grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:12px}
-.playerCard{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);padding:12px 16px;border-radius:12px;min-width:150px;text-align:center}
-.timeSetup{display:flex;align-items:center;justify-content:center;gap:10px;margin:18px 0}
-.time{font-size:40px;background:rgba(255,255,255,0.04);padding:10px 20px;border-radius:10px}
-.big{font-size:84px;font-weight:900;text-align:center;margin:30px 0}
+/* countdown center */
+#ui-countdown .bigTxt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#D85F69;font-size:200px;font-weight:900}
 
-/* 修正：新增 '比賽中' 的排名樣式 (來自您的需求 #3) */
-.ranks{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  justify-content:center;
-}
-.ranks .playerCard {
-  width: 45%;
-  min-width: 150px;
-  text-align: left;
-  padding: 15px;
-  font-size: 1.2em;
-}
-.ranks .playerCard .steps {
-  float: right;
-  font-weight: bold;
-  font-size: 1.2em;
-  color: var(--accent);
-}
+/* running ranks panel */
+#ranksPanel{position:absolute;left:90px;top:360px;width:900px;height:900px;pointer-events:none;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.ranksPanel .playerCard{pointer-events:none}
 
-.podium{text-align:center;margin-top:20px;color:#fff}
-.runArea{background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;margin-top:12px;font-size:18px;touch-action:none}
-.msg{color:#ffdede;margin-top:10px}
-.countdown10{text-align:center}
-#scoreBox{margin-top:12px;font-size:22px;color:#fff}
+/* final10 center */
+#final10 .bigTxt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#D85F69;font-size:140px;font-weight:900}
 
-/* person-specific */
-.centered{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh}
-.large-input input{font-size:22px;padding:18px;border-radius:12px;border:none;width:320px;text-align:center;margin-bottom:12px}
-.large-input .large{font-size:20px;padding:14px 26px;border-radius:12px}
+/* times up */
+#ui-timesup .bigTxt{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);color:#D85F69;font-size:100px}
+#btnScore{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
 
-/* 修正：跑道頁面 (需求 #1, #2) */
-body.no-scroll{overflow:hidden;height:100vh}
-#game.no-scroll{padding:0;height:100vh;max-width:none;}
+/* results */
+#podium{position:absolute;left:90px;top:360px;width:900px;height:900px;color:#fff}
+.podiumRow{background:rgba(255,255,255,0.06);padding:12px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 
-.trackWrap{
-  position:absolute; /* 改為 absolute */
-  top: 0;
-  left: 0;
-  width:100%;
-  height:100vh; /* 佔滿全螢幕 */
-  z-index: -1; /* 放到後面當背景 */
-}
-.trackImg{
-  width:100%;
-  height:100%;
-  object-fit:cover; /* 填滿螢幕 */
-  object-position: center top;
-  border-radius: 0; /* 移除圓角 */
-  box-shadow: none; /* 移除陰影 */
-}
-.waitText{
-  position:absolute;
-  left:50%;
-  top:40%;
-  transform:translate(-50%,-50%);
-  font-size:40px;
-  color:#0b1220;
-  background:#fff;
-  padding:8px 14px;
-  border-radius:8px
-}
+/* person specific */
+.centered{position:absolute;left:0;top:0;width:1080px;height:1920px;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto}
+.label{font-size:28px;color:#fff;margin-bottom:18px}
+.bigInput{width:680px;padding:18px;border-radius:14px;border:none;font-size:24px;text-align:center}
+.ui-btn{pointer-events:auto}
+.ui-btn.large{width:500px}
+.msg{color:#ffdede;margin-top:8px}
 
-/* 修正：調整遊戲畫面的文字和分數位置 */
-#game #waitText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-}
-#game #scoreBox {
-    position: absolute;
-    top: 150px; /* 移到標題下方 */
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 4em;
-    font-weight: 900;
-    color: #f1c40f;
-    text-shadow: 3px 3px #a93226;
-    display: none; /* 預設隱藏 */
-}
-#game #runArea {
-    /* 隱藏 "向下滑動" 文字，因為背景已經很清楚 */
-    display: none;
+/* person game */
+.runArea{position:absolute;left:90px;top:1200px;width:900px;height:200px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.whiteTxt{color:#fff;text-align:center}
+.bigMid{font-size:40px;font-weight:800}
+.trackBg{position:absolute;left:90px;top:240px;width:900px;height:auto;border-radius:12px}
+
+/* small responsive */
+@media (max-width:420px){
+  #stageWrap{transform-origin:0 0}
 }

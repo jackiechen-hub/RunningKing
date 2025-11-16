@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8" />
@@ -6,42 +6,42 @@
 <title>跑跑遊戲王 — 參賽者</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="no-scroll"> <header class="title">
-    <div class="ch">跑跑遊戲王</div>
-    <div class="en">Running King</div>
-  </header>
+<body>
+  <div id="stageWrap">
+    <div id="stage">
+      <img src="assets/personbg.png" id="bg" alt="personbg">
 
-  <main class="container">
-    <section id="register" class="screen active centered">
-      <div class="large-input">
-        <input id="nameInput" placeholder="你的名稱..." maxlength="20" autocomplete="off">
-        <button id="btnRegister" class="btn primary large">報名參賽</button>
+      <!-- 報名區 (置中) -->
+      <div id="person-register" class="ui-layer centered">
+        <div class="label">參賽者名稱</div>
+        <input id="playerName" class="bigInput" type="text" maxlength="20" autocomplete="off" />
+        <img id="btnJoin" src="assets/join.png" class="ui-btn large" alt="報名">
+        <div id="regMsg" class="msg"></div>
       </div>
-      <p id="regMsg" class="msg"></p>
-    </section>
 
-    <section id="game" class="screen hidden no-scroll">
-      <div id="trackWrap" class="trackWrap">
-      
-        <img src="assets/track.jpg" alt="跑道" class="trackImg">
-        
-        <div id="waitText" class="waitText big">WAIT</div>
+      <!-- 比賽中畫面 -->
+      <div id="person-game" class="ui-layer hidden no-scroll">
+        <img src="assets/person.png" class="trackBg" alt="person track">
+        <div id="waitText" class="whiteTxt bigMid">WAIT</div>
+        <div id="runArea" class="runArea">向下滑動增加一步</div>
+        <div id="scoreBox" class="whiteTxt">步數：<span id="score">0</span></div>
       </div>
-      
-      <div id="scoreBox">步數：<span id="score">0</span></div>
-      <div id="runArea" class="runArea"></div>
-    </section>
 
-    <section id="end" class="screen hidden centered">
-      <h2>時間到！</h2>
-      <p>你的成績：<span id="finalScore">0</span></p>
-      <button id="btnBack" class="btn">回到報名</button>
-    </section>
-  </main>
+      <!-- 結果畫面 -->
+      <div id="person-end" class="ui-layer hidden centered">
+        <div class="label bigMid" id="endName"></div>
+        <div class="bigMid" id="endScore">0</div>
+        <img id="btnAgainPlayer" src="assets/again.png" class="ui-btn" alt="重新比賽">
+      </div>
 
+    </div>
+  </div>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
+  <script src="firebase.js"></script>
   <script src="person.js"></script>
 </body>
 </html>
