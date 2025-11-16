@@ -1,0 +1,22 @@
+:root { --bg: #0f1724; --panel: #f8fafc; --accent: #ff7a59; --text:#111827; }
+body { margin:0; font-family: "Microsoft JhengHei", Arial, sans-serif; background: linear-gradient(#111827,#0b1220); color: white; display:flex; flex-direction:column; min-height:100vh; align-items:center; }
+.title { text-align:center; margin:20px 0; }
+.title .ch { font-size:36px; font-weight:700; color:#fff; }
+.title .en { font-size:16px; color:#ddd; margin-top:6px; }
+.container { width:100%; max-width:900px; padding:20px; box-sizing:border-box; }
+h2 { color:#fff; }
+.btn { background:#333; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; margin:6px; }
+.btn.primary { background: var(--accent); color:#fff; font-weight:700; }
+.btn.small { padding:6px 10px; font-size:16px; }
+.hidden { display:none; }
+.grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px; }
+.playerCard { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:10px 14px; border-radius:8px; min-width:120px; text-align:center; }
+.timeSetup { display:flex; align-items:center; justify-content:center; gap:10px; margin:18px 0; }
+.time { font-size:40px; background: rgba(255,255,255,0.06); padding:10px 20px; border-radius:8px; }
+.big { font-size:96px; font-weight:700; text-align:center; margin:40px 0; color:#fff; }
+.ranks { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.podium { text-align:center; margin-top:20px; color:#fff; }
+.runArea { background: rgba(255,255,255,0.03); padding:30px; border-radius:12px; margin-top:20px; font-size:20px; }
+.msg { color: #ffdede; margin-top:10px; }
+.countdown10 { text-align:center; }
+#scoreBox { margin-top:12px; font-size:22px; color:#fff; }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>跑跑遊戲王 — 參賽者</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="title">
+    <div class="ch">跑跑遊戲王</div>
+    <div class="en">Running King</div>
+  </header>
+
+  <main class="container">
+    <section id="register">
+      <p>輸入參賽名稱（不分大小寫）</p>
+      <input id="nameInput" placeholder="你的名稱..." maxlength="20">
+      <div><button id="btnRegister" class="btn primary">報名參賽</button></div>
+      <p id="regMsg" class="msg"></p>
+    </section>
+
+    <section id="game" class="hidden">
+      <div id="waitText" class="big">WAIT</div>
+      <div id="runArea" class="runArea">向下滑動增加一步</div>
+      <div id="scoreBox">步數：<span id="score">0</span></div>
+    </section>
+
+    <section id="end" class="hidden">
+      <h2>時間到！</h2>
+      <p>你的成績：<span id="finalScore">0</span></p>
+      <button id="btnBack" class="btn">回到報名</button>
+    </section>
+  </main>
+
+  <!-- Firebase (compat libs) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script src="person.js"></script>
+</body>
+</html>
