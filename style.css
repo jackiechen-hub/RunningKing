@@ -1,61 +1,70 @@
-/* style.css - 共用（座標以 1080x1920 為基準） */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;padding:0;background:#000;display:flex;align-items:center;justify-content:center}
-#stageWrap{width:1080px;height:1920px;transform-origin:0 0;position:relative}
-#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
-#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}
+/* 讓整個畫面以 1080x1920 做等比縮放滿版 */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Noto Sans TC", sans-serif;
+}
 
-/* 共用 UI layer 以絕對座標定位 */
-.ui-layer{position:absolute;left:0;top:0;width:1080px;height:1920px;pointer-events:none}
+.game-screen {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  transform-origin: top left;
+}
 
-/* waiting - player grid start at (90,360) */
-#playerGrid{pointer-events:auto;left:90px;top:360px;position:absolute;width:900px;height:800px}
-.playerCard{width:300px;height:90px;background:rgba(255,255,255,0.9);color:#111;border-radius:14px;padding:12px;box-shadow:0 8px 18px rgba(0,0,0,0.2);font-weight:700;display:flex;flex-direction:column;justify-content:center}
-.playerCard .pname{font-size:20px}
-.playerCard .psteps{font-size:16px;margin-top:6px}
+#bg {
+  position: absolute;
+  width: 1080px;
+  height: 1920px;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
 
-/* position close button at (90,1400) */
-#btnClose{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
+/* 排行榜內容 */
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  width: 900px;
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: black;
+  transition: transform 0.3s ease-out;
+}
 
-/* config screen positions */
-#timeCenter{position:absolute;left:270px;top:760px;font-size:64px;color:#fff;width:540px;text-align:center}
-#btnMinus{position:absolute;left:258px;top:900px;width:120px;height:auto;pointer-events:auto;cursor:pointer}
-#btnPlus{position:absolute;left:600px;top:900px;width:120px;height:auto;pointer-events:auto;cursor:pointer}
-#btnStart{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
+/* 按鈕（絕對位置由 JS 排版） */
+.btn-img {
+  position: absolute;
+  width: 900px;
+}
 
-/* countdown center */
-#ui-countdown .bigTxt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#D85F69;font-size:200px;font-weight:900}
+/* 文字置中 */
+.center-text {
+  width: 100%;
+  text-align: center;
+  font-size: 180px;
+  font-weight: bold;
+  color: #D85F69;
+  margin-top: 700px;
+}
 
-/* running ranks panel */
-#ranksPanel{position:absolute;left:90px;top:360px;width:900px;height:900px;pointer-events:none;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.ranksPanel .playerCard{pointer-events:none}
+/* 選手畫面 */
+.input-name {
+  width: 800px;
+  font-size: 60px;
+  padding: 20px;
+  border-radius: 20px;
+  margin: 20px auto;
+  display: block;
+}
 
-/* final10 center */
-#final10 .bigTxt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#D85F69;font-size:140px;font-weight:900}
-
-/* times up */
-#ui-timesup .bigTxt{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);color:#D85F69;font-size:100px}
-#btnScore{position:absolute;left:90px;top:1400px;width:420px;height:auto;pointer-events:auto;cursor:pointer}
-
-/* results */
-#podium{position:absolute;left:90px;top:360px;width:900px;height:900px;color:#fff}
-.podiumRow{background:rgba(255,255,255,0.06);padding:12px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-
-/* person specific */
-.centered{position:absolute;left:0;top:0;width:1080px;height:1920px;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto}
-.label{font-size:28px;color:#fff;margin-bottom:18px}
-.bigInput{width:680px;padding:18px;border-radius:14px;border:none;font-size:24px;text-align:center}
-.ui-btn{pointer-events:auto}
-.ui-btn.large{width:500px}
-.msg{color:#ffdede;margin-top:8px}
-
-/* person game */
-.runArea{position:absolute;left:90px;top:1200px;width:900px;height:200px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-.whiteTxt{color:#fff;text-align:center}
-.bigMid{font-size:40px;font-weight:800}
-.trackBg{position:absolute;left:90px;top:240px;width:900px;height:auto;border-radius:12px}
-
-/* small responsive */
-@media (max-width:420px){
-  #stageWrap{transform-origin:0 0}
+.white-text {
+  color: white;
+  font-size: 120px;
+  width: 100%;
+  text-align: center;
+  margin-top: 700px;
 }

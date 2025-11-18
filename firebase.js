@@ -1,4 +1,7 @@
-// firebase.js - 初始化 (compat)
+// Firebase 初始化
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyARfYoqBOdZZ2MChzJF_BC7LoW_comJfec",
   authDomain: "runningking.firebaseapp.com",
@@ -10,5 +13,6 @@ const firebaseConfig = {
   measurementId: "G-8GLV17ZXD8"
 };
 
-firebase.initializeApp(firebaseConfig);
-window.DB = firebase.database();
+const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);
+export { ref, set, get, onValue, update };
