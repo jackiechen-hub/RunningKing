@@ -1,70 +1,55 @@
-/* 讓整個畫面以 1080x1920 做等比縮放滿版 */
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: "Noto Sans TC", sans-serif;
-}
+/* style.css — 全站共用（改良版） */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;background:#000; font-family:"Microsoft JhengHei", Arial, sans-serif; color:#fff}
+#appRoot{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+/* stageWrap 使用 transform translate(-50%,-50%) 並置中 */
+#stageWrap{position:fixed; left:50%; top:50%}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;}
 
-.game-screen {
-  position: relative;
-  width: 1080px;
-  height: 1920px;
-  transform-origin: top left;
-}
+/* UI layer 皆 pointer-events:none, 內含互動元件需 pointer-events:auto */
+.ui-layer{position:absolute;left:0;top:0;width:1080px;height:1920px;pointer-events:none}
 
-#bg {
-  position: absolute;
-  width: 1080px;
-  height: 1920px;
-  top: 0;
-  left: 0;
-  z-index: -1;
-}
+/* playerGrid container position (start 90,360) */
+#playerGrid{position:absolute;left:90px;top:360px;width:900px;height:1000px;pointer-events:auto}
 
-/* 排行榜內容 */
-.player-item {
-  display: flex;
-  justify-content: space-between;
-  width: 900px;
-  font-size: 48px;
-  margin-bottom: 20px;
-  color: black;
-  transition: transform 0.3s ease-out;
-}
+/* playerCard: 圓角矩形，只顯示名稱 */
+.playerCard{width:300px;height:90px;background:#fff;color:#111;border-radius:18px;padding:12px;box-shadow:0 8px 18px rgba(0,0,0,0.15);font-weight:800;display:flex;align-items:center;justify-content:center}
+.playerCard .pname{font-size:24px}
 
-/* 按鈕（絕對位置由 JS 排版） */
-.btn-img {
-  position: absolute;
-  width: 900px;
-}
+/* btn absolute positions (pointer-events auto) */
+.ui-btn{position:absolute;pointer-events:auto;cursor:pointer}
+.ui-btn.small{width:120px}
+.ui-btn.bigBtn{width:500px}
 
-/* 文字置中 */
-.center-text {
-  width: 100%;
-  text-align: center;
-  font-size: 180px;
-  font-weight: bold;
-  color: #D85F69;
-  margin-top: 700px;
-}
+/* config screen positions */
+#timeDisplay{position:absolute;left:270px;top:760px;font-size:64px;color:#fff;text-align:center;width:540px}
+#btnMinus{position:absolute;left:258px;top:900px}
+#btnPlus{position:absolute;left:600px;top:900px}
+#btnStart{position:absolute;left:90px;top:1400px;width:420px}
 
-/* 選手畫面 */
-.input-name {
-  width: 800px;
-  font-size: 60px;
-  padding: 20px;
-  border-radius: 20px;
-  margin: 20px auto;
-  display: block;
-}
+/* countdown big */
+.bigTxt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#D85F69;font-size:200px;font-weight:900;pointer-events:none}
 
-.white-text {
-  color: white;
-  font-size: 120px;
-  width: 100%;
-  text-align: center;
-  margin-top: 700px;
-}
+/* running ranks */
+#ranksPanel{position:absolute;left:90px;top:360px;width:900px;pointer-events:none;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+
+/* final10 */
+#final10 .bigTxt{font-size:140px;color:#D85F69}
+
+/* times up & result positions */
+#btnScore{position:absolute;left:90px;top:1400px;width:420px}
+#podium{position:absolute;left:90px;top:360px;width:900px}
+
+/* person specific (置中) */
+.person-layer.centered{position:absolute;left:0;top:0;width:1080px;height:1920px;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto}
+.bigInput{width:680px;padding:18px;border-radius:12px;border:none;font-size:32px;text-align:center}
+.trackImg{width:900px;border-radius:12px}
+.whiteTxt{color:#fff;text-align:center}
+.bigMid{font-size:40px;font-weight:800;margin-bottom:10px}
+
+/* run area */
+.runArea{position:absolute;left:90px;top:1200px;width:900px;height:200px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);pointer-events:auto}
+
+/* podium row */
+.podiumRow{background:rgba(255,255,255,0.04);padding:12px;border-radius:12px;margin-bottom:10px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:16px}

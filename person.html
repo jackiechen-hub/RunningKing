@@ -1,58 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<title>Running King - Player</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>跑跑遊戲王 — 參賽者</title>
 <link rel="stylesheet" href="style.css">
-<script type="module" src="person.js"></script>
 </head>
 <body>
+  <div id="appRoot">
+    <div id="stageWrap">
+      <div id="stage">
+        <img id="bg" src="assets/personbg.png" alt="背景">
 
-<div id="wrapper" class="game-screen">
-  <img id="bg" src="assets/personbg.png">
+        <!-- 報名（置中） -->
+        <div id="person-register" class="person-layer centered">
+          <div class="label">參賽者名稱</div>
+          <input id="playerName" class="bigInput" type="text" maxlength="20" autocomplete="off" />
+          <img id="btnJoin" src="assets/join.png" class="ui-btn bigBtn" alt="報名">
+          <div id="regMsg" class="msg"></div>
+        </div>
 
-  <div id="register" style="position:absolute; top:360px; width:1080px;">
-    <div class="center-text" style="font-size:80px; margin-top:0; color:black;">
-      參賽者名稱
+        <!-- 比賽中畫面（置中 person.png） -->
+        <div id="person-game" class="person-layer hidden centered no-scroll">
+          <img src="assets/person.png" class="trackImg" alt="跑道">
+          <div id="waitText" class="whiteTxt bigMid">WAIT</div>
+          <div id="runArea" class="runArea">向下滑動增加一步</div>
+          <div id="scoreBox" class="whiteTxt">步數：<span id="score">0</span></div>
+        </div>
+
+        <!-- 結果畫面 -->
+        <div id="person-end" class="person-layer hidden centered">
+          <div id="endName" class="bigMid"></div>
+          <div id="endScore" class="bigMid">0</div>
+          <img id="btnAgainPlayer" src="assets/again.png" class="ui-btn" alt="重新比賽">
+        </div>
+
+      </div>
     </div>
-
-    <input id="playerName" class="input-name" placeholder="輸入名稱">
-
-    <img id="btnJoin" src="assets/join.png"
-         class="btn-img"
-         style="top:900px; left:90px;">
   </div>
 
-  <!-- 比賽畫面 -->
-  <div id="race" style="display:none;">
-    <img id="bgRace" src="assets/person.png" style="position:absolute; top:0; left:0;">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-    <div id="raceCountdown" class="white-text"></div>
-  </div>
-
-  <!-- 結束畫面 -->
-  <div id="finish" style="display:none;">
-    <img id="bgFinish" src="assets/personbg.png" style="position:absolute;">
-
-    <div id="finalName" class="center-text" style="font-size:100px; color:black;"></div>
-    <div id="finalSteps" class="center-text" style="font-size:100px; color:black; margin-top:300px;"></div>
-
-    <img id="btnAgain2" src="assets/again.png"
-         class="btn-img"
-         style="top:1400px; left:90px;">
-  </div>
-
-</div>
-
-<script>
-function resize() {
-  const game = document.querySelector('.game-screen');
-  const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-  game.style.transform = `scale(${scale})`;
-}
-window.onresize = resize;
-resize();
-</script>
-
+  <script src="firebase.js"></script>
+  <script src="person.js"></script>
 </body>
 </html>

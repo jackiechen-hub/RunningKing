@@ -1,42 +1,71 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<title>Running King</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>跑跑遊戲王 — 主畫面</title>
 <link rel="stylesheet" href="style.css">
-<script type="module" src="main.js"></script>
 </head>
 <body>
-<div id="wrapper" class="game-screen">
-  <img id="bg" src="assets/mainbg.png">
+  <div id="appRoot">
+    <div id="stageWrap">
+      <div id="stage">
+        <img id="bg" src="assets/mainbg.png" alt="背景">
 
-  <!-- 玩家名單容器 -->
-  <div id="playerList" style="position:absolute; top:360px; left:90px;"></div>
+        <!-- 等待/報名畫面 -->
+        <div id="ui-wait" class="ui-layer">
+          <div id="playerCountText" class="txt">目前參賽者：<span id="playerCount">0</span> 人</div>
 
-  <!-- 报名截止按钮 -->
-  <img id="btnClose" class="btn-img" src="assets/close.png" style="top:1400px; left:90px;">
+          <!-- 選手名單起點 (90,360) 由 CSS 控制 -->
+          <div id="playerGrid"></div>
 
-  <!-- 时间倒数中央大字 -->
-  <div id="centerText" class="center-text" style="display:none;"></div>
+          <!-- 報名截止按鈕 (90,1400) -->
+          <img id="btnClose" class="ui-btn" src="assets/close.png" alt="報名截止">
+        </div>
 
-  <!-- 公布成績按鈕 -->
-  <img id="btnScore" class="btn-img" src="assets/score.png"
-       style="top:1400px; left:90px; display:none;">
+        <!-- 設定時間畫面 -->
+        <div id="ui-config" class="ui-layer hidden">
+          <div id="timeDisplay" class="timeTxt">03:00</div>
+          <img id="btnMinus" class="ui-btn small" src="assets/-1.png" alt="-1">
+          <img id="btnPlus" class="ui-btn small" src="assets/+1.png" alt="+1">
+          <img id="btnStart" class="ui-btn" src="assets/start.png" alt="開始遊戲">
+        </div>
 
-  <!-- 重新開始按鈕 -->
-  <img id="btnAgain" class="btn-img" src="assets/again.png"
-       style="top:1400px; left:90px; display:none;">
-</div>
+        <!-- 倒數大字 -->
+        <div id="ui-countdown" class="ui-layer hidden">
+          <div id="bigCount" class="bigTxt">3</div>
+        </div>
 
-<script>
-function resize() {
-  const game = document.querySelector('.game-screen');
-  const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-  game.style.transform = `scale(${scale})`;
-}
-window.onresize = resize;
-resize();
-</script>
+        <!-- 比賽中 -->
+        <div id="ui-running" class="ui-layer hidden">
+          <div id="ranksPanel"></div>
+          <div id="final10" class="hidden"><div id="finalCount" class="bigTxt">10</div></div>
+        </div>
 
+        <!-- 時間到 -->
+        <div id="ui-timesup" class="ui-layer hidden">
+          <div class="bigTxt">TIMES UP</div>
+          <img id="btnScore" class="ui-btn" src="assets/score.png" alt="公布成績">
+        </div>
+
+        <!-- 結果頁 -->
+        <div id="ui-result" class="ui-layer hidden">
+          <div id="podium"></div>
+          <img id="btnAgain" class="ui-btn" src="assets/again.png" alt="重新開始">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- 初始化 firebase（請確保 firebase.js 在根目錄） -->
+  <script src="firebase.js"></script>
+
+  <!-- 主程式 -->
+  <script src="main.js"></script>
 </body>
 </html>
