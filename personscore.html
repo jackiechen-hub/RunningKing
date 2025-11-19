@@ -3,22 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Running King — 主畫面</title>
+<title>Running King — 選手成績</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body id="page-index">
+<body id="page-personscore">
   <div class="stage">
     <img class="bg" src="assets/bg.png" alt="背景">
-    <div class="player-count">目前參賽者：<span id="playerCount">0</span> 人</div>
-    <div id="playerList" class="player-list"></div>
-
-    <img id="btnClose" class="btn" src="assets/close.png" alt="報名截止">
+    <div id="psName" class="ps-name"></div>
+    <div id="psScore" class="ps-score"></div>
+    <img id="btnAgain" class="btn" src="assets/again.png" alt="再玩一次">
   </div>
 
 <script src="js/firebase.js"></script>
 <script src="js/app.js"></script>
 <script>
-window.PAGE='index';
+window.PAGE='personscore';
 window.initPage && window.initPage();
 </script>
 </body>
